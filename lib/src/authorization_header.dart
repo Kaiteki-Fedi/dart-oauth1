@@ -48,7 +48,9 @@ class AuthorizationHeader {
     if (_credentials != null) {
       params['oauth_token'] = _credentials!.token;
     }
-    params.addAll(_additionalParameters!);
+    if (_additionalParameters != null) {
+      params.addAll(_additionalParameters!);
+    }
     if (!params.containsKey('oauth_signature')) {
       params['oauth_signature'] = _createSignature(_method, _url, params);
     }
