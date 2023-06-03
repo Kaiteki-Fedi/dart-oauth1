@@ -24,16 +24,19 @@ class Authorization {
   ///
   /// If you want to use in web browser, pass http.BrowserClient object for httpClient.
   /// https://api.dartlang.org/apidocs/channels/stable/dartdoc-viewer/http/http-browser_client.BrowserClient
-  Authorization(this._clientCredentials, this._platform,
-      [http.BaseClient? httpClient])
-      : _httpClient = httpClient ?? http.Client() as http.BaseClient;
+  Authorization(
+    this._clientCredentials,
+    this._platform, [
+    http.BaseClient? httpClient,
+  ]) : _httpClient = httpClient ?? http.Client() as http.BaseClient;
 
   /// Obtain a set of temporary credentials from the server.
   /// http://tools.ietf.org/html/rfc5849#section-2.1
   ///
   /// If not callbackURI passed, authentication becomes PIN-based.
-  Future<AuthorizationResponse> requestTemporaryCredentials(
-      [String? callbackURI]) async {
+  Future<AuthorizationResponse> requestTemporaryCredentials([
+    String? callbackURI,
+  ]) async {
     callbackURI ??= 'oob';
     final Map<String, String> additionalParams = <String, String>{
       'oauth_callback': callbackURI
@@ -66,9 +69,7 @@ class Authorization {
   /// http://tools.ietf.org/html/rfc5849#section-2.2
   String getResourceOwnerAuthorizationURI(
       String temporaryCredentialsIdentifier) {
-    return _platform.resourceOwnerAuthorizationURI +
-        '?oauth_token=' +
-        Uri.encodeComponent(temporaryCredentialsIdentifier);
+    return '${_platform.resourceOwnerAuthorizationURI}?oauth_token=${Uri.encodeComponent(temporaryCredentialsIdentifier)}';
   }
 
   /// Obtain a set of token credentials from the server.

@@ -1,3 +1,8 @@
+## 3.0.0
+- Support Dart 3
+- Update dependencies
+- Small code cleanup
+
 ## 2.0.0
 - Migrate to null safety
 

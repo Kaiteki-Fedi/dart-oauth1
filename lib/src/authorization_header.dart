@@ -37,29 +37,26 @@ class AuthorizationHeader {
   /// (You can override too but I don't recommend.)
   @override
   String toString() {
-    final Map<String, String> params = <String, String>{};
+    final Map<String, String> params = <String, String>{
+      'oauth_nonce': DateTime.now().millisecondsSinceEpoch.toString(),
+      'oauth_signature_method': _signatureMethod.name,
+      'oauth_timestamp':
+          (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString(),
+      'oauth_consumer_key': _clientCredentials.token,
+      'oauth_version': '1.0',
+      if (_credentials != null) 'oauth_token': _credentials!.token,
+      if (_additionalParameters != null) ..._additionalParameters!,
+    };
 
-    params['oauth_nonce'] = DateTime.now().millisecondsSinceEpoch.toString();
-    params['oauth_signature_method'] = _signatureMethod.name;
-    params['oauth_timestamp'] =
-        (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
-    params['oauth_consumer_key'] = _clientCredentials.token;
-    params['oauth_version'] = '1.0';
-    if (_credentials != null) {
-      params['oauth_token'] = _credentials!.token;
-    }
-    if (_additionalParameters != null) {
-      params.addAll(_additionalParameters!);
-    }
     if (!params.containsKey('oauth_signature')) {
       params['oauth_signature'] = _createSignature(_method, _url, params);
     }
 
-    final String authHeader = 'OAuth ' +
-        params.keys.map((String k) {
-          return '$k="${Uri.encodeComponent(params[k]!)}"';
-        }).join(', ');
-    return authHeader;
+    final encodedParams = params.entries.map((kv) {
+      return '${kv.key}="${Uri.encodeComponent(kv.value)}"';
+    }).join(', ');
+
+    return 'OAuth $encodedParams';
   }
 
   /// Percent-encodes the [param].
